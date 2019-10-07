@@ -38,9 +38,37 @@ const MORSE_TABLE = {
 };
 
 function decode(expr) {
-    // write your solution here
-}
-
-module.exports = {
+    const exprArr = expr.split('');
+    const LETTER_LENGTH = 10;
+    const ENCODING_BINARY = {
+      '10': '.',
+      '11': '-'
+    };
+    let letters = [];
+    let chunk;
+    // Read encoded expression by chunk of 10
+    do {
+      chunk = exprArr.splice(0, LETTER_LENGTH);
+      // Get rid of left padded 0
+      while (chunk[0] === 0) {
+        chunk.shift();
+      }
+      // Decode letter
+      if (chunk[0] === '*') {
+        letters.push(' ');
+      } else {
+        const letterMorse = [];
+        while (chunk.length) {
+          const twoBits = chunk.splice(0, 2).join('');
+          const dotOrDash = ENCODING_BINARY[twoBits];
+          letterMorse.push(dotOrDash);
+        }
+        const letter = MORSE_TABLE[letterMorse.join('')];
+        letters.push(letter);
+      }
+    } while (exprArr.length > 0);
+    return letters.join('');
+  }
+  module.exports = {
     decode
 }
